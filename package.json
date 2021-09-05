@@ -1,0 +1,23 @@
+{
+  "name": "softwiki-server",
+  "description": "",
+  "version": "1.0.0",
+  "author": "Xavier Esnault",
+  "license": "GPL-3.0",
+  "main": "./src/index.ts",
+  "scripts": {
+    "start": "rm -rf build && tsc && tsc-alias && node build/index.js",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.1",
+    "jest": "^27.1.0",
+    "ts-jest": "^27.0.5",
+    "tsc-alias": "^1.3.9",
+    "typescript": "^4.4.2"
+  },
+  "dependencies": {
+    "@types/node": "^16.7.10",
+    "fastify": "^3.20.2"
+  }
+}
