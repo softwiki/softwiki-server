@@ -3,9 +3,7 @@ import { FastifyPluginCallback, RegisterOptions, FastifyRegister, FastifyPlugin 
 const notes: FastifyPluginCallback = function (instance, opts, done) {
 
 		instance.get("/", async (request, reply) => {
-			return [
-				{ez: "pz"}
-			]
+			return instance.db.notes.all();
 		})
 		done();
 }

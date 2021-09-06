@@ -1,6 +1,7 @@
+import SQLDatabase from "@app/database";
 import App from "./app";
 
-const server = App();
+const server = App({database: new SQLDatabase()});
 
 server.listen(8081, (err, address) => {
 	if (err) {

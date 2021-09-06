@@ -7,6 +7,8 @@ module.exports = {
   ],
   moduleNameMapper: {
     '^@app/(.*)$': '<rootDir>/src/app/$1',
-    '^@app$': '<rootDir>/src/app'
+    '^@app$': '<rootDir>/src/app',
+    '^@mock/(.*)$': '<rootDir>/src/mock/$1',
+    '^@mock$': '<rootDir>/src/mock'
   },
 };
