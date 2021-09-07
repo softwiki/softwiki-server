@@ -1,7 +1,7 @@
 import fastify, { FastifyInstance } from "fastify";
 import apap from ".";
 import notes from "@app/routes/notes"
-import { IDatabase } from "./database";
+import { IDatabase } from "./database/database";
 
 declare module "fastify" {
 	interface FastifyInstance {

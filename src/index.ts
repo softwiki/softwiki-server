@@ -1,13 +1,16 @@
-import SQLDatabase from "@app/database";
+import { SQLiteDatabase } from "@app/database";
 import App from "./app";
 
-const server = App({database: new SQLDatabase()});
+SQLiteDatabase.create("./db.sqlite3").then((db) => {
+	const server = App({database: db});
 
-server.listen(8081, (err, address) => {
-	if (err) {
-		console.error(err);
-		process.exit(1);
-	}
+	server.listen(8081, (err, address) => {
+		if (err) {
+			console.error(err);
+			process.exit(1);
+		}
 
-	console.log(`Server listening at ${address}`);
+		console.log(`Server listening at ${address}`);
+	})
 })
+
