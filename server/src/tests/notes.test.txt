@@ -1,0 +1,69 @@
+import App from "@app"
+import { NoteModel, SQLiteDatabase } from "@app/database";
+import { FastifyInstance } from "fastify";
+import fs from "fs/promises"
+
+function fillNote(note: Partial<NoteModel>): Partial<NoteModel> {
+	return {
+		title: "",
+		content: "",
+		tagsId: [],
+		categoryId: null,
+		...note
+	}
+}
+
+describe("/notes", () => {
+
+	let db: SQLiteDatabase
+	let app: FastifyInstance
+
+	let firstNote: any
+	let secondNote: any
+
+	beforeAll(async () => {
+		await fs.rm("./tests.sqlite3", {force: true});
+		db = await SQLiteDatabase.create("./tests.sqlite3");
+		app = App({database: db});
+	})
+
+	test("check empty notes", async () => {
+		const notes = await app.inject({
+			method: "GET",
+			url: "/notes"
+		})
+
+		expect(notes.statusCode).toBe(200);
+		expect(notes.json()).toEqual([]);
+	})
+	
+	test("creating note", async () => {
+		const noteBody = {
+			title: "first note",
+			content: "hello world"
+		}
+
+		const result = await app.inject({
+			method: "POST",
+			url: "/notes",
+			payload: noteBody
+		})
+
+		expect(result.statusCode).toBe(201);
+		expect(result.json()).toHaveProperty("id")
+		expect(result.json()).toEqual({id: result.json().id});
+
+		const notes = await app.inject({
+			method: "GET",
+			url: "/notes"
+		})
+
+		expect(notes.statusCode).toBe(200);
+		expect(notes.json()).toHaveLength(1);
+		expect(notes.json()).toEqual([{...fillNote(noteBody), id: result.json().id}]);
+	})
+
+	test("creating another note", async () => {
+		
+	})	
+})

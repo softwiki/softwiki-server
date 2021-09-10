@@ -1,0 +1,3 @@
+[submodule "libs/softwiki-core"]
+	path = libs/softwiki-core
+	url = git@github.com:softwiki/softwiki-core.git

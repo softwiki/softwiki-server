@@ -1,16 +1,15 @@
 import fastify, { FastifyInstance } from "fastify";
-import apap from ".";
-import notes from "@app/routes/notes"
-import { IDatabase } from "./database/database";
+import notes from "@server/routes/notes"
+import { Api } from "@softwiki-core";
 
 declare module "fastify" {
 	interface FastifyInstance {
-		db: IDatabase
+		db: Api
 	}
 }
 
 interface AppConfig {
-	database: IDatabase
+	database: Api
 }
 
 export default function App(config: AppConfig): FastifyInstance

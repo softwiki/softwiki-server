@@ -1,0 +1,44 @@
+import App from "@app"
+import { SQLiteDatabase } from "@app/database";
+import { FastifyInstance } from "fastify";
+import fs from "fs/promises"
+
+describe("/notes", () => {
+
+	let db: SQLiteDatabase
+	let app: FastifyInstance
+
+	beforeAll(async () => {
+		await fs.rm("./tests.sqlite3", {force: true});
+		db = await SQLiteDatabase.create("./tests.sqlite3");
+		app = App({database: db});
+	})
+
+	test("Check empty database", async () => {
+		const notes = await app.inject({
+			method: "GET",
+			url: "/notes"
+		})
+
+		const tags = await app.inject({
+			method: "GET",
+			url: "/tags"
+		})
+
+		const categories = await app.inject({
+			method: "GET",
+			url: "/categories"
+		})
+
+		expect(notes.statusCode).toBe(200);
+		expect(tags.statusCode).toBe(200);
+		expect(categories.statusCode).toBe(200);
+
+		expect(notes.json()).toEqual([]);
+		expect(tags.json()).toEqual([]);
+		expect(categories.json()).toEqual([]);
+	})
+})
+
+
+SQL SELECT n.*, group_concat(c.tagId) tagsId FROM notes n LEFT JOIN notes_tags_links c ON c.noteId = 1
