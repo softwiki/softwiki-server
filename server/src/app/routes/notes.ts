@@ -19,7 +19,7 @@ const notes: FastifyPluginCallback = function (instance, opts, done) {
 			return await instance.db.getNotes();
 		})
 		
-		const noteSchema = {
+		const createNoteSchema = {
 			title: "Create note",
 			type: "object",
 			required: ["title", "content"],
@@ -31,34 +31,42 @@ const notes: FastifyPluginCallback = function (instance, opts, done) {
 			},
 			additionalProperties: false
 		} as const;
-		
 
-		instance.post<{Body: FromSchema<typeof noteSchema>}>("/", {schema: {body: noteSchema}},
+		instance.post<{Body: FromSchema<typeof createNoteSchema>}>("/", {
+			schema: {
+				body: createNoteSchema
+			}},
 			async (request, reply) => {
 				const note = await instance.db.createNote(fillNote(request.body))
 				reply.code(201);
 				reply.send({id: note.id});
 			})
 
-		/*instance.post<{Body: {}, Params: {noteId: string}}>("/:noteId", {schema: {body: updateNoteSchema}}, async (request, reply) => {
-			if (!(await instance.db.notes.all()).find((note: NoteModel) => note.id === request.params.noteId)) {
-				reply.code(404);
-				reply.send();
-				return ;
-			}
-			reply.code(200);
-			reply.send({...request.body, id: Date.now()});
-		})
+		const updateNoteSchema = {...createNoteSchema, required: []}
 
-		instance.delete<{Body: {}, Params: {noteId: string}}>("/:noteId", async (request, reply) => {
-			if (!(await instance.db.notes.all()).find((note: NoteModel) => note.id === request.params.noteId)) {
+		instance.post<{Body: FromSchema<typeof updateNoteSchema>, Params: {noteId: string}}>("/:noteId", {
+			schema: {
+				body: updateNoteSchema
+			}},
+			async (request, reply) => {
+				if (!(await instance.db.getNotes()).find((note: NoteModel) => note.id === request.params.noteId)) {
+					reply.code(404);
+					reply.send();
+					return ;
+				}
+				reply.code(200);
+				reply.send({...request.body, id: Date.now()});
+			})
+
+		instance.delete<{Params: {noteId: string}}>("/:noteId", async (request, reply) => {
+			if (!(await instance.db.getNotes()).find((note: NoteModel) => note.id === request.params.noteId)) {
 				reply.code(404);
 				reply.send();
 				return ;
 			}
 			reply.code(200);
-			reply.send({...request.body, id: Date.now()});
-		})*/
+			reply.send();
+		})
 
 		done();
 }

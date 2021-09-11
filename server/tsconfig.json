@@ -35,6 +35,8 @@
     "paths": {
       "@server/*": ["./app/*"],
       "@server": ["./app"],
+      "@tests/*": ["./tests/*"],
+      "@tests": ["./tests"],
       "@softwiki-core/*": ["../../libs/softwiki-core/src/*"],
       "@softwiki-core": ["../../libs/softwiki-core/src"]
     },                                         /* Specify a set of entries that re-map imports to additional lookup locations. */

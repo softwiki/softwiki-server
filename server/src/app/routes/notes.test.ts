@@ -1,39 +1,20 @@
-import App from "@app";
-import { SQLiteDatabase, SQLiteDatabaseRepository, IDatabase, NoteModel, IDatabaseRepository, TagModel, CategoryModel } from "@app/database";
+import 'module-alias/register';
+
 import { FastifyInstance } from "fastify";
-import { threadId } from "worker_threads";
+import { setupEmptyApp } from '@tests/helper';
 
-const fakeData: {notes: NoteModel[], tags: TagModel[], categories: CategoryModel[]} = {
-	notes: [
-		{
-			id: "0",
-			title: "This is a test",
-			content: "ez",
-			tagsId: ["0", "1"],
-			categoryId: null
-		}
-	],
-	tags: [],
-	categories: []
-}
+describe("/notes", () => {
 
-describe("route: notes", () => {
-
-	let db: DatabaseMock
 	let app: FastifyInstance;
 
-	beforeEach(() => {
-		db = new DatabaseMock(fakeData);
-		app = App({
-			database: db
-		});
+	beforeEach(async () => {
+		app = await setupEmptyApp("route_notes.sqlite3");
 	})
 
-	test("GET: 200", async () => {
-		db.notes.addMockReturn(fakeData.notes)
+	it("GET: 200", async () => {
 		const data = await app.inject("/notes");
 		expect(data.statusCode).toEqual(200);
-		expect(data.json()).toEqual(fakeData.notes)
+		expect(data.json()).toEqual([])
 	})
 
 	test("CREATE: 201", async () => {
@@ -45,10 +26,7 @@ describe("route: notes", () => {
 			categoryId: null
 		}
 
-		const mockReturnValue = {...newNote, id: "42"}
-		db.notes.addMockReturn(mockReturnValue)
-
-		const res = await app.inject({
+		let res = await app.inject({
 			method: "POST",
 			url: "/notes",
 			payload: newNote
@@ -60,6 +38,18 @@ describe("route: notes", () => {
 		expect(data.id).not.toBeUndefined();
 		console.log(typeof(data.id))
 		expect(typeof(data.id) === "string").toBeTruthy();
+
+		res = await app.inject({
+			method: "GET",
+			url: "/notes"
+		});
+
+		expect(res.json()).toHaveLength(1);
+		expect(res.json()[0]).toHaveProperty("id");
+		expect(res.json()[0]).toHaveProperty("title");
+		expect(res.json()[0]).toHaveProperty("content");
+		expect(res.json()[0]).toHaveProperty("tagsId");
+		expect(res.json()[0]).toHaveProperty("categoryId");
 	})
 
 	test("CREATE: 400", async () => {
@@ -79,13 +69,25 @@ describe("route: notes", () => {
 	})
 
 	test("UPDATE: 200", async () => {
+		
+		const note = {
+			title: "test new note",
+			content: "amazing content",
+			tagsId: [],
+			categoryId: null
+		}
 
-		const noteId = "0";
+		const res = await app.inject({
+			method: "POST",
+			url: "/notes",
+			payload: note
+		});
+
+		const noteId = res.json().id;
+
 		const noteUpdate = {
 			title: "test new note with update"
 		}
-
-		db.notes.addMockReturn(fakeData.notes)
 
 		const data = await app.inject({
 			method: "POST",
@@ -103,7 +105,6 @@ describe("route: notes", () => {
 			title: "test new note with update"
 		}
 
-		db.notes.addMockReturn(fakeData.notes)
 		const data = await app.inject({
 			method: "POST",
 			url: `/notes/${noteId}`,
@@ -115,9 +116,21 @@ describe("route: notes", () => {
 
 	test("DELETE: 200", async () => {
 
-		const noteId = "0";
+		const note = {
+			title: "test new note",
+			content: "amazing content",
+			tagsId: [],
+			categoryId: null
+		}
 
-		db.notes.addMockReturn(fakeData.notes)
+		const res = await app.inject({
+			method: "POST",
+			url: "/notes",
+			payload: note
+		});
+
+		const noteId = res.json().id;
+
 		const data = await app.inject({
 			method: "DELETE",
 			url: `/notes/${noteId}`
@@ -130,7 +143,6 @@ describe("route: notes", () => {
 
 		const noteId = "7355608";
 
-		db.notes.addMockReturn(fakeData.notes)
 		const data = await app.inject({
 			method: "DELETE",
 			url: `/notes/${noteId}`

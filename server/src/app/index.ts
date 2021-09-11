@@ -1,6 +1,7 @@
 import fastify, { FastifyInstance } from "fastify";
 import notes from "@server/routes/notes"
 import { Api } from "@softwiki-core";
+import tags from "@server/routes/tags";
 
 declare module "fastify" {
 	interface FastifyInstance {
@@ -19,6 +20,8 @@ export default function App(config: AppConfig): FastifyInstance
 	server.decorate("db", config.database);
 
 	server.register(notes, {prefix: "/notes"});
+	server.register(tags, {prefix: "/tags"});
+	server.register(tags, {prefix: "/categories"});
 
 	return server;
 }
