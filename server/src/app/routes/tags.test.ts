@@ -1,42 +1,10 @@
 import 'module-alias/register';
 
 import { FastifyInstance, LightMyRequestResponse } from "fastify";
-import { setupEmptyApp } from '@tests/helper';
+import { createTagHelper, deleteTagHelper, getTagsHelper, setupEmptyApp, updateTagHelper } from '@tests/helper';
 import { TagProperties } from '@softwiki-core/objects';
 
 const defaultColor = {r: 1, g: 2, b: 3};
-
-const BASE_URL = "/tags"
-
-async function getTagsHelper(app: FastifyInstance): Promise<LightMyRequestResponse> {
-	return await app.inject({
-		method: "GET",
-		url: `${BASE_URL}`
-	})
-}
-
-async function createTagHelper(app: FastifyInstance, properties: Partial<TagProperties>): Promise<LightMyRequestResponse> {
-	return await app.inject({
-		method: "POST",
-		url: `${BASE_URL}`,
-		payload: properties
-	})
-}
-
-async function updateTagHelper(app: FastifyInstance, id: string, properties: Partial<TagProperties>): Promise<LightMyRequestResponse> {
-	return await app.inject({
-		method: "POST",
-		url: `${BASE_URL}/${id}`,
-		payload: properties
-	})
-}
-
-async function deleteTagHelper(app: FastifyInstance, id: string): Promise<LightMyRequestResponse> {
-	return await app.inject({
-		method: "DELETE",
-		url: `${BASE_URL}/${id}`
-	})
-}
 
 describe("/tags", () => {
 

@@ -49,24 +49,46 @@ const notes: FastifyPluginCallback = function (instance, opts, done) {
 				body: updateNoteSchema
 			}},
 			async (request, reply) => {
-				if (!(await instance.db.getNotes()).find((note: NoteModel) => note.id === request.params.noteId)) {
-					reply.code(404);
-					reply.send();
-					return ;
-				}
+				await instance.db.updateNote(request.params.noteId, request.body);
 				reply.code(200);
-				reply.send({...request.body, id: Date.now()});
+				reply.send();
 			})
 
 		instance.delete<{Params: {noteId: string}}>("/:noteId", async (request, reply) => {
-			if (!(await instance.db.getNotes()).find((note: NoteModel) => note.id === request.params.noteId)) {
-				reply.code(404);
-				reply.send();
-				return ;
-			}
-			reply.code(200);
+			await instance.db.deleteNote(request.params.noteId);
+				reply.code(200);
 			reply.send();
 		})
+
+		const addTagSchema = {
+			title: "Add tag",
+			type: "object",
+			required: ["tagId"],
+			properties: {
+				tagId: {type: "string"}
+			},
+			additionalProperties: false
+		} as const;
+
+		instance.post<{Body: FromSchema<typeof addTagSchema>, Params: {noteId: string}}>("/:noteId/tags", {
+			schema: {
+				body: addTagSchema
+			}},
+			async (request, reply) => {
+				await instance.db.addTagToNote(request.params.noteId, request.body.tagId);
+				reply.code(200);
+				reply.send();
+			})
+
+		instance.delete<{Body: FromSchema<typeof addTagSchema>, Params: {noteId: string}}>("/:noteId/tags", {
+			schema: {
+				body: addTagSchema
+			}},
+			async (request, reply) => {
+				await instance.db.removeTagFromNote(request.params.noteId, request.body.tagId);
+				reply.code(200);
+				reply.send();
+			})
 
 		done();
 }

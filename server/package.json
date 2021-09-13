@@ -6,7 +6,7 @@
   "license": "GPL-3.0",
   "main": "./src/index.ts",
   "scripts": {
-    "start": "tsc-alias && node build/index.js",
+    "start": "tsc -b && node build/index.js",
     "test": "jest"
   },
   "devDependencies": {
@@ -20,11 +20,11 @@
     "@types/node": "^16.7.10",
     "@types/sqlite3": "^3.1.7",
     "fastify": "^3.20.2",
+    "fastify-cors": "^6.0.2",
     "json-schema-to-ts": "^1.6.4",
     "mariadb": "^2.5.4",
     "module-alias": "^2.2.2"
   },
-  
   "_moduleAliases": {
     "@server": "./build/app",
     "@softwiki-core": "../libs/softwiki-core/build"

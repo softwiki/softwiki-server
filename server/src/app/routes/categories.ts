@@ -6,7 +6,9 @@ import { NoteProperties } from "@softwiki-core/objects";
 const categories: FastifyPluginCallback = function (instance, opts, done) {
 
 		instance.get("/", async (request, reply) => {
-			return await instance.db.getTags();
+			console.log("GET CATEGORIES")
+			console.log(await instance.db.getCategories())
+			return await instance.db.getCategories();
 		})
 		
 		const createCategorySchema = {
@@ -24,11 +26,11 @@ const categories: FastifyPluginCallback = function (instance, opts, done) {
 				body: createCategorySchema
 			}},
 			async (request, reply) => {
-				const tag = await instance.db.createCategory({
+				const category = await instance.db.createCategory({
 					name: request.body.name
 				})
 				reply.code(201);
-				reply.send({id: tag.id});
+				reply.send({id: category.id});
 			})
 
 		const updateCategorySchema = {...createCategorySchema, required: []}

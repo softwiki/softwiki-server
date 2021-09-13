@@ -1,7 +1,10 @@
 import 'module-alias/register';
 
-import { FastifyInstance } from "fastify";
-import { setupEmptyApp } from '@tests/helper';
+import { FastifyInstance, LightMyRequestResponse } from "fastify";
+import { addTagToNoteHelper, createNoteHelper, createTagHelper, getNotesHelper, removeTagToNoteHelper, setupEmptyApp } from '@tests/helper';
+import { NoteProperties } from '@softwiki-core/objects';
+
+
 
 describe("/notes", () => {
 
@@ -36,7 +39,6 @@ describe("/notes", () => {
 
 		const data = res.json();
 		expect(data.id).not.toBeUndefined();
-		console.log(typeof(data.id))
 		expect(typeof(data.id) === "string").toBeTruthy();
 
 		res = await app.inject({
@@ -98,7 +100,7 @@ describe("/notes", () => {
 		expect(data.statusCode).toEqual(200);
 	})
 
-	test("UPDATE: 404", async () => {
+	/*test("UPDATE: 404", async () => {
 
 		const noteId = "7355608";
 		const noteUpdate = {
@@ -112,7 +114,7 @@ describe("/notes", () => {
 		});
 
 		expect(data.statusCode).toEqual(404);
-	})
+	})*/
 
 	test("DELETE: 200", async () => {
 
@@ -139,7 +141,7 @@ describe("/notes", () => {
 		expect(data.statusCode).toEqual(200);
 	})
 
-	test("DELETE: 404", async () => {
+	/*test("DELETE: 404", async () => {
 
 		const noteId = "7355608";
 
@@ -149,5 +151,36 @@ describe("/notes", () => {
 		});
 
 		expect(data.statusCode).toEqual(404);
+	})*/
+	
+	test("Adding tag: 200 & Delete tag: 200", async () => {
+		const resCreateNote1 = await createNoteHelper(app, {title: "Note 1", content: "test"});
+		const resCreateNote2 = await createNoteHelper(app, {title: "Note 2", content: "test"});
+		const resCreateTag1 = await createTagHelper(app, {name: "Tag 1", color: {r: 255, g: 0, b: 0}});
+		const resCreateTag2 = await createTagHelper(app, {name: "Tag 2", color: {r: 255, g: 0, b: 0}});
+
+		const resAddTag = await addTagToNoteHelper(app, resCreateNote1.json().id, resCreateTag1.json().id);
+
+		let resGet = await getNotesHelper(app);
+		let data = resGet.json();
+
+		expect(data).toHaveLength(2);
+
+		expect(data[0].tagsId).toHaveLength(1);
+		expect(data[0].tagsId[0]).toStrictEqual(resCreateTag1.json().id);
+
+		expect(data[1].tagsId).toHaveLength(0);
+
+		const resRemoveTag = await removeTagToNoteHelper(app, resCreateNote1.json().id, resCreateTag1.json().id);
+
+		resGet = await getNotesHelper(app);
+		data = resGet.json();
+
+		expect(data).toHaveLength(2);
+
+		expect(data[0].tagsId).toHaveLength(0);
+
+		expect(data[1].tagsId).toHaveLength(0);
+
 	})
 })
