@@ -1,6 +1,6 @@
 import App from "@server";
 import SQLiteProvider from "@softwiki-core/api-providers/SQLiteProvider";
-import { NoteProperties, TagProperties } from "@softwiki-core/objects";
+import { CategoryProperties, NoteProperties, TagProperties } from "@softwiki-core/objects";
 import { FastifyInstance, LightMyRequestResponse } from "fastify";
 import fs from "fs/promises";
 
@@ -62,19 +62,19 @@ export async function removeTagToNoteHelper(app: FastifyInstance, noteId: string
 	})
 }
 
-const TAG_BASE_URL = "/tags"
+const TAGS_BASE_URL = "/tags"
 
 export async function getTagsHelper(app: FastifyInstance): Promise<LightMyRequestResponse> {
 	return await app.inject({
 		method: "GET",
-		url: `${TAG_BASE_URL}`
+		url: `${TAGS_BASE_URL}`
 	})
 }
 
 export async function createTagHelper(app: FastifyInstance, properties: Partial<TagProperties>): Promise<LightMyRequestResponse> {
 	return await app.inject({
 		method: "POST",
-		url: `${TAG_BASE_URL}`,
+		url: `${TAGS_BASE_URL}`,
 		payload: properties
 	})
 }
@@ -82,7 +82,7 @@ export async function createTagHelper(app: FastifyInstance, properties: Partial<
 export async function updateTagHelper(app: FastifyInstance, id: string, properties: Partial<TagProperties>): Promise<LightMyRequestResponse> {
 	return await app.inject({
 		method: "POST",
-		url: `${TAG_BASE_URL}/${id}`,
+		url: `${TAGS_BASE_URL}/${id}`,
 		payload: properties
 	})
 }
@@ -90,6 +90,38 @@ export async function updateTagHelper(app: FastifyInstance, id: string, properti
 export async function deleteTagHelper(app: FastifyInstance, id: string): Promise<LightMyRequestResponse> {
 	return await app.inject({
 		method: "DELETE",
-		url: `${TAG_BASE_URL}/${id}`
+		url: `${TAGS_BASE_URL}/${id}`
+	})
+}
+
+const CATEGORIES_BASE_URL = "/categories"
+
+export async function getCategoriesHelper(app: FastifyInstance): Promise<LightMyRequestResponse> {
+	return await app.inject({
+		method: "GET",
+		url: `${CATEGORIES_BASE_URL}`
+	})
+}
+
+export async function createCategoryHelper(app: FastifyInstance, properties: Partial<CategoryProperties>): Promise<LightMyRequestResponse> {
+	return await app.inject({
+		method: "POST",
+		url: `${CATEGORIES_BASE_URL}`,
+		payload: properties
+	})
+}
+
+export async function updateCategoryHelper(app: FastifyInstance, id: string, properties: Partial<CategoryProperties>): Promise<LightMyRequestResponse> {
+	return await app.inject({
+		method: "POST",
+		url: `${CATEGORIES_BASE_URL}/${id}`,
+		payload: properties
+	})
+}
+
+export async function deleteCategoryHelper(app: FastifyInstance, id: string): Promise<LightMyRequestResponse> {
+	return await app.inject({
+		method: "DELETE",
+		url: `${CATEGORIES_BASE_URL}/${id}`
 	})
 }

@@ -4,6 +4,7 @@ import { Api } from "@softwiki-core";
 import tags from "@server/routes/tags";
 import fastifyCors from "fastify-cors"
 import categories from "./routes/categories";
+import { UnknownIdError } from "@softwiki-core/errors/ApiError";
 
 declare module "fastify" {
 	interface FastifyInstance {
@@ -24,6 +25,16 @@ export default function App(config: AppConfig): FastifyInstance
 	});
 	
 	server.decorate("db", config.database);
+
+	server.setErrorHandler((error, request, reply) => {			
+
+		if (error instanceof UnknownIdError) {
+			reply.code(404);
+			reply.send(error);
+			return ;
+		}
+		server.errorHandler(error, request, reply);
+	})
 
 	server.register(notes, {prefix: "/notes"});
 	server.register(tags, {prefix: "/tags"});

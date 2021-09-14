@@ -100,7 +100,7 @@ describe("/notes", () => {
 		expect(data.statusCode).toEqual(200);
 	})
 
-	/*test("UPDATE: 404", async () => {
+	test("UPDATE: 404", async () => {
 
 		const noteId = "7355608";
 		const noteUpdate = {
@@ -114,7 +114,7 @@ describe("/notes", () => {
 		});
 
 		expect(data.statusCode).toEqual(404);
-	})*/
+	})
 
 	test("DELETE: 200", async () => {
 
@@ -141,7 +141,7 @@ describe("/notes", () => {
 		expect(data.statusCode).toEqual(200);
 	})
 
-	/*test("DELETE: 404", async () => {
+	test("DELETE: 404", async () => {
 
 		const noteId = "7355608";
 
@@ -151,7 +151,7 @@ describe("/notes", () => {
 		});
 
 		expect(data.statusCode).toEqual(404);
-	})*/
+	})
 	
 	test("Adding tag: 200 & Delete tag: 200", async () => {
 		const resCreateNote1 = await createNoteHelper(app, {title: "Note 1", content: "test"});

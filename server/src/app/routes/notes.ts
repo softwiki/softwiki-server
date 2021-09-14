@@ -2,6 +2,7 @@ import { FastifyPluginCallback, RegisterOptions, FastifyRegister, FastifySchema 
 import {FromSchema} from "json-schema-to-ts"
 import { NoteModel } from "@softwiki-core/api-providers/Api";
 import { NoteProperties } from "@softwiki-core/objects";
+import { UnknownIdError } from "@softwiki-core/errors/ApiError";
 
 function fillNote(note: Partial<NoteProperties>): NoteProperties {
 	return {

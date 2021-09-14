@@ -6,8 +6,6 @@ import { NoteProperties } from "@softwiki-core/objects";
 const categories: FastifyPluginCallback = function (instance, opts, done) {
 
 		instance.get("/", async (request, reply) => {
-			console.log("GET CATEGORIES")
-			console.log(await instance.db.getCategories())
 			return await instance.db.getCategories();
 		})
 		
